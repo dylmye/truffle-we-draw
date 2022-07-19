@@ -35,11 +35,11 @@ function ExtensionMapping() {
   return (
     <div className="c-home">
       <h1>Prompt: poop</h1>
-      <CanvasDraw canvasWidth={350} canvasHeight={200} brushRadius={5} hideGrid ref={canvasRef} />
-      <div className="c-actions">
+      <CanvasDraw canvasWidth={350} canvasHeight={200} brushRadius={5} hideGrid ref={canvasRef} lazyRadius={0} />
+      <footer className="c-actions">
         <Button className="button button-clear" onClick={onClear}>Clear</Button>
         <Button className="button button-send" onClick={console.log}>Send</Button>
-      </div>
+      </footer>
     </div>
   );
 }
