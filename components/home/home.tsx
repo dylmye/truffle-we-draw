@@ -9,6 +9,7 @@ import styleSheet from "./home.scss.js";
 function ExtensionMapping() {
   useStyleSheet(styleSheet);
   const canvasRef = useRef<CanvasDraw | null>(null);
+  const isVisible = true;
 
   const onClear = useCallback(() => {
     canvasRef?.current?.clear();
@@ -27,7 +28,7 @@ function ExtensionMapping() {
     jumper.call("layout.applyLayoutConfigSteps", {
       layoutConfigSteps: [
         { action: "useSubject" }, // start with our iframe
-        { action: "setStyle", value: style },
+        { action: "setStyle", value: isVisible ? style : { display: "none" } },
       ],
     });
   }, []);
