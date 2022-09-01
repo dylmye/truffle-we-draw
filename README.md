@@ -19,12 +19,12 @@ Made up of 4 features:
 
 ## data structure
 
-At the root, we store an array of `Competitions`. Each competition has two timestamps (created date and 'expiry date', aka when the submission period closes) and an array of `Submissions`. Each `Submission` has the drawing data encoded in base64 as well as the author data, timestamp of submission and a nullable boolean representing whether the submission was approved (true), denied (false) or not yet filtered (null).
+At the root, we store an array of `Competitions` (in reality a `Form`). Each competition has two timestamps (created date and 'expiry date', aka when the submission period closes) and an array of `Submissions` (in reality a `FormResponse`). Each `Submission` has the drawing data encoded in base64 as well as the author data, timestamp of submission and a nullable boolean representing whether the submission was approved (true), denied (false) or not yet filtered (null).
 
 ## status
 
-* Basic UI completed
-* No backend done lol
+* UI complete except for hiding when there is no active form
+* Backend: need to add polling for active form, data structure, upsert/mutation and just generally plugging data in.
 
 ## licence
 

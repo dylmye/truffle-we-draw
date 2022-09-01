@@ -11,3 +11,73 @@ export interface IPollResult {
         components: any;
     }
 }
+
+///////////////////////////
+// Input Types
+///////////////////////////
+
+export interface FormInput {
+    id?: string;
+    slug?: string;
+}
+
+export interface FormResponseConnectionInput {
+    formId?: string;
+    orgId?: string;
+    isMe?: boolean;
+    userId?: string;
+    minTime?: string;
+    maxTime?: string;
+}
+
+export interface FormUpsertInput {
+    id?: string;
+    orgId?: string;
+    name?: string;
+    data?: Record<string, any>;
+    description?: string;
+    maxResponsesPerUser?: number;
+    endTime?: string;
+}
+
+export interface FormQuestionUpsertInput {
+    id?: string;
+    formId?: string;
+    question?: string;
+    type?: 'shortText' | 'longText' | 'multipleChoice' | 'checkboxes' | 'dropdown' | 'imageUpload' | 'date' | 'time';
+    data?: Record<string, any>;
+    rank?: number;
+}
+
+export interface FormQuestionAnswerBatchUpsertRow {
+    formQuestionId: string;
+    value: any;
+}
+
+export interface FormResponseUpsertInput {
+    id?: string;
+    formId?: string;
+    formQuestionAnswers?: FormQuestionAnswerBatchUpsertRow[];
+    metadata?: any;
+}
+
+///////////////////////////
+// Query Return Types
+///////////////////////////
+
+export interface Form {
+    id: string;
+    orgId: string;
+    slug: string;
+    name: string;
+    data: Record<string, any>;
+    description: string;
+    maxResponsesPerUser: number;
+    endTime: string;
+    formQuestionConnection: any;
+    formResponseConnection: any;
+}
+
+export interface FormUpsertPayload {
+    form: Form;
+}
