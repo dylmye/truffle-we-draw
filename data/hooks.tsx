@@ -1,5 +1,5 @@
 import React, { useCallback } from "https://npm.tfl.dev/react";
-import { query, useMutation, useQuery } from "https://tfl.dev/@truffle/api@~0.1.0/client.ts";
+import { query, useMutation } from "https://tfl.dev/@truffle/api@~0.1.0/client.ts";
 import dayjs from "https://npm.tfl.dev/dayjs@1";
 import {
   FORMS_CONNECTION_QUERY,
@@ -7,6 +7,7 @@ import {
   UPSERT_FORM_ANSWER_QUERY,
 } from "./gql.ts";
 import {
+  ActiveForm,
   Form,
   FormResponseConnectionInput,
   FormResponseUpsertInput,
@@ -16,9 +17,7 @@ import {
 /**
  * Get the most recent active form and its question ID.
  */
-export const getActiveFormIds = async (): Promise<
-  { formId?: string; questionId?: string }
-> => {
+export const getActiveFormIds = async (): Promise<ActiveForm> => {
   const { data, error } = await query(FORMS_CONNECTION_QUERY, {}).catch(console.error);
 
   if (error) {
@@ -35,8 +34,12 @@ export const getActiveFormIds = async (): Promise<
   ) => dayjs(a.endTime).isAfter(b.endTime) ? -1 : dayjs(a.endTime).isSame(b.endTime) ? 0 : 1);
 
   if (allForms?.length) {
+    const activeForm = allForms[0];
+    const activeQuestion = activeForm?.formQuestionConnection?.nodes[0];
     return {
-      formId: allForms[0]?.id,
+      formId: activeForm.id,
+      prompt: activeForm.description,
+      questionId: activeQuestion?.id,
     };
   }
   return {};
@@ -74,7 +77,7 @@ export const getPreviousResponse = async (formId?: string): Promise<FormUpsertPa
  */
 export const useSubmitDrawing = (
   formId?: string,
-): (formQuestionId: string, dataUri: string) => any => {
+) => {
   const [_, executeSubmitDrawingMutation] = useMutation(
     UPSERT_FORM_ANSWER_QUERY,
   );

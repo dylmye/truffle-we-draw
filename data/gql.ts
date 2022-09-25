@@ -1,5 +1,18 @@
 import { gql } from "https://tfl.dev/@truffle/api@~0.1.0/client.ts";
 
+/** Retrieve a list of active forms. For now there's no filtering, so just retrieve all the endTimes.
+ * @see https://truffle-labs.notion.site/Form-924308c3335145fa800f4c1a5def3dd7#6039dfe2ecdf43ffb33a27e7b0d3b9f8
+ */
+export const ACTIVE_FORMS_POLL_QUERY = gql`
+query ActiveFormsPollingQuery {
+  formConnection(first: 10000) {
+    nodes {
+      endTime
+    }
+  }
+}
+`;
+
 /** Retrieve a list of active forms. There is no pagination for FormConnection.
  * @see https://truffle-labs.notion.site/Form-924308c3335145fa800f4c1a5def3dd7#6039dfe2ecdf43ffb33a27e7b0d3b9f8
  */
@@ -11,7 +24,13 @@ export const FORMS_CONNECTION_QUERY = gql`
         name
         slug
         data
-        endTime
+        endTime,
+        formQuestionConnection {
+          nodes {
+            id,
+            type
+          }
+        }
       }
     }
   }

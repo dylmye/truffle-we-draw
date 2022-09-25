@@ -12,12 +12,13 @@ import Button from "https://tfl.dev/@truffle/ui@~0.1.0/components/button/button.
 
 import styleSheet from "./home.scss.js";
 import { getActiveFormIds, getPreviousResponse, useSubmitDrawing } from "../../data/hooks.tsx";
+import { ActiveForm } from "../../data/types.ts";
 
 function ExtensionMapping() {
   useStyleSheet(styleSheet);
   const canvasRef = useRef<CanvasDraw | null>(null);
   const [isVisible, setVisibility] = useState(false);
-  const [activeForm, setActiveForm] = useState<{ formId?: string; questionId?: string }>({});
+  const [activeForm, setActiveForm] = useState<ActiveForm>({});
   const previousResponse = useMemo(() => getPreviousResponse(activeForm?.formId), [activeForm]);
   const containerStyle = useMemo<React.CSSProperties>(() => ({
     width: "400px",
@@ -39,7 +40,7 @@ function ExtensionMapping() {
       // see https://github.com/embiem/react-canvas-draw/issues/143
       // @ts-ignore: Unreachable code error
       const dataUrl: string = canvasRef?.current?.getDataURL("png", false, "#ffffff");
-      submitDrawing(dataUrl, activeForm?.questionId);
+      submitDrawing(activeForm?.questionId, dataUrl);
     }
   }, []);
 
@@ -50,8 +51,11 @@ function ExtensionMapping() {
     });
   }, []);
 
+  console.log({ activeForm });
+
   useEffect(() => {
     // set styles for this iframe within YouTube's site
+    // @ts-ignore truffle acknowledged types are broken for JumperInstance
     jumper.call("layout.applyLayoutConfigSteps", {
       layoutConfigSteps: [
         { action: "useSubject" }, // start with our iframe
@@ -64,7 +68,7 @@ function ExtensionMapping() {
     <div className="c-home">
       {isVisible && (
         <>
-          <h1>Prompt: poop!</h1>
+          <h1>Prompt: {activeForm?.prompt}</h1>
           <CanvasDraw
             canvasWidth={350}
             canvasHeight={200}

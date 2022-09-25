@@ -12,6 +12,16 @@ export interface IPollResult {
     }
 }
 
+export interface Nodes<NodeType> {
+    nodes: NodeType[];
+}
+
+export interface ActiveForm {
+    formId?: string;
+    questionId?: string;
+    prompt?: string;
+}
+
 ///////////////////////////
 // Input Types
 ///////////////////////////
@@ -74,8 +84,8 @@ export interface Form {
     description: string;
     maxResponsesPerUser: number;
     endTime: string;
-    formQuestionConnection: any;
-    formResponseConnection: any;
+    formQuestionConnection: Nodes<FormQuestionUpsertInput>;
+    formResponseConnection: Nodes<FormResponseUpsertInput>;
 }
 
 export interface FormUpsertPayload {
