@@ -23,8 +23,8 @@ At the root, we store an array of `Competitions` (in reality a `Form`). Each com
 
 ## status
 
-* UI complete except for hiding when there is no active form
-* Backend: need to add polling for active form, data structure, upsert/mutation and just generally plugging data in.
+* Working on completing the polling, need to test it
+* Admin UI (creating polls etc) hasn't been worked out
 
 ## licence
 
