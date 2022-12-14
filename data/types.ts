@@ -75,6 +75,13 @@ export interface FormResponseUpsertInput {
 // Query Return Types
 ///////////////////////////
 
+export interface ActiveFormResponse {
+    id: string;
+    slug: string;
+    /** datetime: `YYYY-MM-DDTHH:MM:SS.sssZ` */
+    endTime: string;
+}
+
 export interface Form {
     id: string;
     orgId: string;

@@ -7,10 +7,24 @@ export default scss`
   flex-direction: column;
   justify-content: space-between;
   flex: 1;
-  & > h1 {
+  & h1 {
     font-size: 16px;
     text-align: center;
     margin: 0;
+  }
+  & header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 350px;
+    & h1 {
+      flex: 1;
+      text-align: left;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      margin-right: 0.5rem;
+    }
   }
   & > .c-actions {
     display: flex;

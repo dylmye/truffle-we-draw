@@ -1,18 +1,22 @@
-import React, { useCallback } from "https://npm.tfl.dev/react";
-import { query, useMutation } from "https://tfl.dev/@truffle/api@~0.1.0/client.ts";
+import React, { useCallback, useState } from "https://npm.tfl.dev/react";
+import { query, useMutation, usePollingQuery } from "https://tfl.dev/@truffle/api@~0.1.0/client.ts";
 import dayjs from "https://npm.tfl.dev/dayjs@1";
 import {
+  ACTIVE_FORMS_POLL_QUERY,
   FORMS_CONNECTION_QUERY,
+  READ_FORM_QUERY,
   READ_FORM_RESPONSES_QUERY,
   UPSERT_FORM_ANSWER_QUERY,
 } from "./gql.ts";
 import {
   ActiveForm,
+  ActiveFormResponse,
   Form,
   FormResponseConnectionInput,
   FormResponseUpsertInput,
   FormUpsertPayload,
 } from "./types.ts";
+import { filterActiveForms } from "./helpers.tsx";
 
 /**
  * Get the most recent active form and its question ID.
@@ -26,9 +30,7 @@ export const getActiveFormIds = async (): Promise<ActiveForm> => {
 
   // remove forms with no endDate and expired forms
   // then sort descending
-  const allForms = (data?.formConnection?.nodes as Form[]).filter((x) =>
-    (x.endTime !== null) && (dayjs(x.endTime).isAfter(dayjs()))
-  ).sort((
+  const allForms = (data?.formConnection?.nodes as Form[]).filter(filterActiveForms).sort((
     a,
     b,
   ) => dayjs(a.endTime).isAfter(b.endTime) ? -1 : dayjs(a.endTime).isSame(b.endTime) ? 0 : 1);
@@ -42,7 +44,44 @@ export const getActiveFormIds = async (): Promise<ActiveForm> => {
       questionId: activeQuestion?.id,
     };
   }
+  console.info("No active forms found");
   return {};
+};
+
+export const useSyncActiveForm = (): ActiveForm | null => {
+  // 1 - set up subscription that doesn't do anything while an active form is set, set active form if one exists
+  // 2 - check if active form, if it's expired set active form to null
+  const [storedCurrentActiveForm, setStoredCurrentActiveForm] = useState<ActiveFormResponse | null>(
+    null,
+  );
+
+  const activeFormPolling = usePollingQuery(3000, {
+    query: ACTIVE_FORMS_POLL_QUERY,
+  });
+
+  const allForms: ActiveFormResponse[] = activeFormPolling?.data?.formConnection?.nodes;
+  const activeForms = allForms.filter(filterActiveForms).sort((
+    a,
+    b,
+  ) => dayjs(a.endTime).isAfter(b.endTime) ? -1 : dayjs(a.endTime).isSame(b.endTime) ? 0 : 1);
+
+  if (!allForms || !activeForms?.length) {
+    setStoredCurrentActiveForm(null);
+    return null;
+  }
+
+  if (activeForms[0].id === storedCurrentActiveForm?.id) {
+    // @TODO: make sCAF ActiveForm instead of ActiveFormResponse, also rename the types lol
+    return null;
+  }
+
+  // we have an active form, it's not the current one, lets get its data and cache it + return it
+  setStoredCurrentActiveForm(activeForms[0]);
+  query(READ_FORM_QUERY, {
+    formId: storedCurrentActiveForm?.id,
+    slug: storedCurrentActiveForm?.slug,
+  }).then(console.log);
+  return null;
 };
 
 /**

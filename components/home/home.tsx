@@ -11,7 +11,12 @@ import CanvasDraw from "https://npm.tfl.dev/react-canvas-draw@1";
 import Button from "https://tfl.dev/@truffle/ui@~0.1.0/components/button/button.tag.ts";
 
 import styleSheet from "./home.scss.js";
-import { getActiveFormIds, getPreviousResponse, useSubmitDrawing } from "../../data/hooks.tsx";
+import {
+  getActiveFormIds,
+  getPreviousResponse,
+  useSubmitDrawing,
+  useSyncActiveForm,
+} from "../../data/hooks.tsx";
 import { ActiveForm } from "../../data/types.ts";
 
 function ExtensionMapping() {
@@ -19,6 +24,7 @@ function ExtensionMapping() {
   const canvasRef = useRef<CanvasDraw | null>(null);
   const [isVisible, setVisibility] = useState(false);
   const [activeForm, setActiveForm] = useState<ActiveForm>({});
+  // useSyncActiveForm();
   const previousResponse = useMemo(() => getPreviousResponse(activeForm?.formId), [activeForm]);
   const containerStyle = useMemo<React.CSSProperties>(() => ({
     width: "400px",
@@ -30,6 +36,8 @@ function ExtensionMapping() {
     "display": isVisible ? "block" : "none",
   }), [isVisible]);
   const submitDrawing = useSubmitDrawing(activeForm?.formId);
+
+  const onClose = () => setVisibility(false);
 
   const onClear = useCallback(() => {
     canvasRef?.current?.clear();
@@ -68,7 +76,10 @@ function ExtensionMapping() {
     <div className="c-home">
       {isVisible && (
         <>
-          <h1>Prompt: {activeForm?.prompt}</h1>
+          <header>
+            <h1 title={`Prompt: ${activeForm?.prompt ?? ""}`}>Prompt: {activeForm?.prompt}</h1>
+            <Button className="button button-clear" onClick={onClose}>Close</Button>
+          </header>
           <CanvasDraw
             canvasWidth={350}
             canvasHeight={200}

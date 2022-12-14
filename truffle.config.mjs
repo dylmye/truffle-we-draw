@@ -1,6 +1,6 @@
 export default {
   name: "@early-access-dlyme/dylme-we-draw",
-  version: "0.5.1",
+  version: "0.5.8",
   apiUrl: "https://mycelium.staging.bio/graphql",
   requestedPermissions: [
     {
